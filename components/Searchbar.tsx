@@ -1,6 +1,7 @@
 "use client";
 
 import { scrapeAndStoreProduct } from "@/lib/actions";
+import Product from "@/lib/models/product.model";
 import { log } from "console";
 import { FormEvent, useState } from "react";
 
@@ -40,6 +41,7 @@ const Searchbar = () => {
 
       // sracp the product page
       const product = await scrapeAndStoreProduct(searchPrompt);
+
     } catch (error) {
       console.log(error);
       
