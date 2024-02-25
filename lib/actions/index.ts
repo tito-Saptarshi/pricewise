@@ -20,6 +20,8 @@ export async function scrapeAndStoreProduct(productUrl: string) {
 
     const existingProduct = await Product.findOne({ url: scrapedProduct.url });
 
+    let newProduct = null;
+
     if (existingProduct) {
       const updatedPriceHistory: any = [
         ...existingProduct.priceHistory,
@@ -33,14 +35,20 @@ export async function scrapeAndStoreProduct(productUrl: string) {
         highestPrice: getHighestPrice(updatedPriceHistory),
         averagePrice: getAveragePrice(updatedPriceHistory),
       };
-    }
+      // updating the data in the database and if there's no data, creating new object of it and then uploading it
+      newProduct = await Product.findOneAndUpdate(
+        { url: scrapedProduct.url },
+        product,
+        { upsert: true, new: true }
+      );
+    } else {
+      const priceHistory = [];
+      priceHistory.push({  price: scrapedProduct.currentPrice });
+      product.priceHistory = priceHistory;
 
-    // updating the data in the database and if there's no data, creating new object of it and then uploading it
-    const newProduct = await Product.findOneAndUpdate(
-      { url: scrapedProduct.url },
-      product,
-      { upsert: true, new: true }
-    );
+      newProduct = new Product(product);
+      await newProduct.save();
+    }
 
     revalidatePath(`/products/${newProduct._id}`);
 
@@ -50,17 +58,16 @@ export async function scrapeAndStoreProduct(productUrl: string) {
   }
 }
 
-export async function getProductById(productId:string) {
-  try { 
+export async function getProductById(productId: string) {
+  try {
     connectToDB();
 
     const product = await Product.findOne({ _id: productId });
 
-    if(!product) return null;
+    if (!product) return null;
 
     return product;
   } catch (error) {
     console.log(error);
-    
   }
 }
