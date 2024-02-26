@@ -1,4 +1,4 @@
-"use server";
+"use server"
 
 import { revalidatePath } from "next/cache";
 import Product from "../models/product.model";
@@ -55,14 +55,13 @@ export async function getProductById(productId: string) {
 
     const product = await Product.findOne({ _id: productId });
 
-    if (!product) return null;
+    if(!product) return null;
 
     return product;
   } catch (error) {
     console.log(error);
   }
 }
-
 
 export async function getAllProducts() {
   try {

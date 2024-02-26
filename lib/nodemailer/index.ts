@@ -1,30 +1,28 @@
 "use server"
 
-import { EmailContent, EmailProductInfo, NotificationType } from "@/types";
-import nodemailer from "nodemailer";
+import { EmailContent, EmailProductInfo, NotificationType } from '@/types';
+import nodemailer from 'nodemailer';
 
-// variables indicating four different types of mail we can send
 const Notification = {
-  WELCOME: "WELCOME",
-  CHANGE_OF_STOCK: "CHANGE_OF_STOCK",
-  LOWEST_PRICE: "LOWEST_PRICE",
-  THRESHOLD_MET: "THRESHOLD_MET",
-};
+  WELCOME: 'WELCOME',
+  CHANGE_OF_STOCK: 'CHANGE_OF_STOCK',
+  LOWEST_PRICE: 'LOWEST_PRICE',
+  THRESHOLD_MET: 'THRESHOLD_MET',
+}
 
 export async function generateEmailBody(
   product: EmailProductInfo,
   type: NotificationType
-) {
+  ) {
   const THRESHOLD_PERCENTAGE = 40;
-
   // Shorten the product title
   const shortenedTitle =
     product.title.length > 20
       ? `${product.title.substring(0, 20)}...`
       : product.title;
 
-  let subject = ""; //subject of the email
-  let body = ""; //body of the email
+  let subject = "";
+  let body = "";
 
   switch (type) {
     case Notification.WELCOME:
@@ -82,25 +80,20 @@ export async function generateEmailBody(
   return { subject, body };
 }
 
-// SMTP Transfer Protocol
 const transporter = nodemailer.createTransport({
-    pool: true,
-    service: 'hotmail',
-    port: 2525,
-    auth: {
-      user: 'saptarshi.dev@hotmail.com',
-      pass: process.env.EMAIL_PASSWORD,
-    },
-    maxConnections: 1
-  })
+  pool: true,
+  service: 'hotmail',
+  port: 2525,
+  auth: {
+    user: 'saptarshi.dev@hotmail.com',
+    pass: process.env.EMAIL_PASSWORD,
+  },
+  maxConnections: 1
+})
 
-// sendTo: string[] --> types is array of strings
-export const sendEmail = async (
-  emailContent: EmailContent,
-  sendTo: string[]
-) => {
+export const sendEmail = async (emailContent: EmailContent, sendTo: string[]) => {
   const mailOptions = {
-    from: "saptarshi.dev@hotmail.com",
+    from: 'saptarshi.dev@hotmail.com',
     to: sendTo,
     html: emailContent.body,
     subject: emailContent.subject,
@@ -111,5 +104,4 @@ export const sendEmail = async (
     
     console.log('Email sent: ', info);
   })
-
-};
+}
