@@ -91,7 +91,7 @@ export async function scrapeAmazonProduct(url: string) {
       isOutOfStock: outOfStock,
       lowestPrice: Number(currentPrice) || Number(originalPrice),
       highestPrice: Number(originalPrice) || Number(currentPrice),
-      average: Number(originalPrice) || Number(currentPrice),
+      averagePrice: Number(originalPrice) || Number(currentPrice),
       description,
     };
     // console.log(data);

@@ -1,3 +1,5 @@
+"use server"
+
 import { EmailContent, EmailProductInfo, NotificationType } from "@/types";
 import nodemailer from "nodemailer";
 
@@ -76,14 +78,17 @@ export async function generateEmailBody(
     default:
       throw new Error("Invalid notification type.");
   }
+
+  return { subject, body };
 }
 
+// SMTP Transfer Protocol
 const transporter = nodemailer.createTransport({
     pool: true,
     service: 'hotmail',
     port: 2525,
     auth: {
-      user: 'javascriptmastery@outlook.com',
+      user: 'saptarshi.dev@hotmail.com',
       pass: process.env.EMAIL_PASSWORD,
     },
     maxConnections: 1
@@ -95,9 +100,16 @@ export const sendEmail = async (
   sendTo: string[]
 ) => {
   const mailOptions = {
-    from: "javascriptmastery@outlook.com",
+    from: "saptarshi.dev@hotmail.com",
     to: sendTo,
     html: emailContent.body,
     subject: emailContent.subject,
-  };
+  }
+
+  transporter.sendMail(mailOptions, (error: any, info: any) => {
+    if(error) return console.log(error);
+    
+    console.log('Email sent: ', info);
+  })
+
 };
