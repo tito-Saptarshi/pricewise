@@ -39,7 +39,7 @@ export async function scrapeAndStoreProduct(productUrl: string) {
       };
       // updating the data in the database and if there's no data, creating new object of it and then uploading it
       newProduct = await Product.findOneAndUpdate(
-        { url: scrapedProduct.url },
+        { url: product.url },
         product,
         { upsert: true, new: true }
       );
